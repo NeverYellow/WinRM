@@ -386,22 +386,22 @@ Process {
  
         if($Summary) { $ShowMessage = $False } else { $ShowMessage = $True }
    
-        if([string]::IsNullOrEmpty($ComputerName)) {
+        if([string]::IsNullOrEmpty($Computer)) {
                     WriteTo-Screen -Message "No ComputerName given." -ShowOnScreen $ShowMessage
                     Continue
         }
-        WriteTo-Screen -Message "Gathering Computer data: $ComputerName" -ShowOnScreen $ShowMessage
-        if(IsValidIPv4Address -ip $ComputerName) {
+        WriteTo-Screen -Message "Gathering Computer data: $Computer" -ShowOnScreen $ShowMessage
+        if(IsValidIPv4Address -ip $Computer) {
             try {
-                $HostInfo = [system.net.dns]::GetHostByAddress($ComputerName)
+                $HostInfo = [system.net.dns]::GetHostByAddress($Computer)
             }
             catch {
-                WriteTo-Screen -Message "Given ComputerName ($ComputerName) is an IPAddress, but cannot be resolved" -ShowOnScreen $ShowMessage
+                WriteTo-Screen -Message "Given ComputerName ($Computer) is an IPAddress, but cannot be resolved" -ShowOnScreen $ShowMessage
                 Continue
             }
         } else {
             try {
-                $HostInfo = [system.net.dns]::GetHostByName($ComputerName)
+                $HostInfo = [system.net.dns]::GetHostByName($Computer)
             }
             catch {
                 WriteTo-Screen -Message "Cannot find a computer with this name." -ShowOnScreen $ShowMessage

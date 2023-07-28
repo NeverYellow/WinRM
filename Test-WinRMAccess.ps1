@@ -156,6 +156,14 @@ begin {
                         }
                     } catch {
                         Write-Verbose "${IDS_FUNCTIONNAME}: Failed to connect to $computer with WSMAN protocol: $_"
+                        Write-Verbose "${IDS_FUNCTIONNAME}: Now trying again with WSMAN -UseSSL: $_"
+                        # Trying again with -UseSSL
+                        if ((Test-WSMan -ComputerName $computer -UseSSL).productversion -match 'Stack: ([3-9]|[1-9][0-9]+)\.[0-9]+') {
+                            $CimSessionOption = New-CimSessionOption -UseSSL
+                            $cimSession = New-CimSession -ComputerName $computer @sessionSplat -SessionOption $CimSessionOption
+                            Write-Verbose "${IDS_FUNCTIONNAME}: Connected to $computer using the WSMAN protocol (SSL)."
+                        }
+
                     }
             
                     try {
@@ -427,6 +435,10 @@ Process {
         try {
             if(Test-PortConnection $FQDNHost -Port 135) {
                 WriteTo-Screen -Message "  $FQDNHost is online (Port 135)" -ShowOnScreen $ShowMessage
+                if(Test-PortConnection -Address $FQDNHost -Port 5986) {
+                    WriteTo-Screen -Message "  $FQDNHost has port 5986 enabled" -ShowOnScreen $ShowMessage
+                }
+
         } else {
             Throw
         }
